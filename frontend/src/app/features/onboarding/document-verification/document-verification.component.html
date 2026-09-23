@@ -1,0 +1,89 @@
+<div class="layout">
+  <section class="card capture enter">
+    <div class="types" role="radiogroup" aria-label="Document type">
+      @for (t of types; track t.id) {
+        <button type="button" role="radio" class="type" [class.selected]="type() === t.id" [attr.aria-checked]="type() === t.id"
+          (click)="type.set(t.id); result.set(null)">
+          <span class="icon">{{ t.icon }}</span>{{ t.label }}
+        </button>
+      }
+    </div>
+
+    <div class="stage" [class.drag]="dragging()" [class.scanning]="analysing()"
+      (dragover)="$event.preventDefault(); dragging.set(true)" (dragleave)="dragging.set(false)" (drop)="onDrop($event)">
+      @if (media()) {
+        @if (preview()) {
+          <img [src]="preview()" alt="Selected document preview (stays on your device)" />
+        } @else {
+          <div class="doc" [class]="'doc ' + type()">
+            <div class="doc-top"><span>REPUBBLICA ITALIANA</span><span>{{ typeLabel().toUpperCase() }}</span></div>
+            <div class="doc-body">
+              <div class="photo"><svg viewBox="0 0 40 48"><circle cx="20" cy="17" r="9"/><path d="M3 46c2-10 9-15 17-15s15 5 17 15"/></svg></div>
+              <div class="lines">
+                <span class="l w80"></span><span class="l w60"></span><span class="l w70"></span><span class="l w40"></span><span class="l w55"></span>
+              </div>
+              <div class="holo"></div>
+            </div>
+            <div class="mrz mono">P&lt;ITA&lt;&lt;DEMO&lt;&lt;APPLICANT&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br />YA0000082&lt;4ITA9103149F3104178&lt;&lt;&lt;&lt;&lt;&lt;02</div>
+          </div>
+        }
+        @if (analysing()) {
+          <div class="scanline"></div>
+          <div class="corners"><i></i><i></i><i></i><i></i></div>
+        }
+      } @else {
+        <label class="drop">
+          <input type="file" accept="image/*,application/pdf" (change)="onFile($any($event.target).files?.[0])" />
+          <span class="drop-icon">⇪</span>
+          <strong>Drop a photo of your {{ typeLabel().toLowerCase() }}</strong>
+          <span class="muted">or click to browse · JPG, PNG, PDF</span>
+        </label>
+      }
+    </div>
+
+    <div class="row">
+      <button class="btn btn--sm btn--ghost" type="button" (click)="useDemo()">Use demo document</button>
+      @if (media()) { <span class="file mono">{{ media()!.fileName }}</span> }
+      <span class="spacer"></span>
+      <button class="btn btn--primary" type="button" [disabled]="!media() || analysing() || !!result()" (click)="analyse()">
+        @if (analysing()) { <span class="spinner"></span> Analysing document… } @else { Analyse document }
+      </button>
+    </div>
+    <p class="note">🔒 Demo mode: the image stays in your browser. Only file metadata is sent to the API.</p>
+  </section>
+
+  <section class="card results" [class.empty]="!result()">
+    @if (result(); as r) {
+      <div class="enter">
+        <div class="res-head">
+          <div>
+            <span class="eyebrow">Document AI</span>
+            <h3>Document detected</h3>
+          </div>
+          <app-status-badge [status]="r.signal.status" size="lg" />
+        </div>
+        <dl class="kv">
+          <div><dt>Document type</dt><dd>{{ r.extractedFields[0].value }}</dd></div>
+          <div><dt>OCR</dt><dd><app-status-badge [status]="r.ocrStatus" /></dd></div>
+          <div><dt>Issuing country</dt><dd>{{ r.extractedFields[2].value }}</dd></div>
+          <div><dt>Document number</dt><dd class="mono">{{ r.extractedFields[1].value }}</dd></div>
+        </dl>
+        <div class="meters">
+          <app-confidence-indicator [value]="r.authenticity" label="Document authenticity" />
+          <app-confidence-indicator [value]="r.dataConsistency" label="Data consistency" />
+        </div>
+        <app-check-list [checks]="r.checks" />
+        <div class="continue">
+          <button class="btn btn--primary btn--lg" type="button" (click)="completed.emit(r)">Continue to face verification →</button>
+        </div>
+      </div>
+    } @else if (error()) {
+      <p class="error" role="alert">{{ error() }}</p>
+    } @else {
+      <div class="placeholder">
+        <span class="eyebrow">Awaiting document</span>
+        <p class="muted">We'll check: OCR extraction · MRZ integrity · security features · digital tampering · expiry · data consistency</p>
+      </div>
+    }
+  </section>
+</div>

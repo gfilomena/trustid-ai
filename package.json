@@ -1,0 +1,14 @@
+{
+  "name": "trustid-ai",
+  "private": true,
+  "description": "TrustID AI: AI-powered identity verification against deepfakes and fraud (hackathon MVP)",
+  "scripts": {
+    "install:all": "npm install --prefix backend && npm install --prefix frontend",
+    "dev:api": "npm run dev --prefix backend",
+    "dev:web": "npm start --prefix frontend",
+    "dev": "npm run dev:api & npm run dev:web; wait",
+    "test": "npm test --prefix backend",
+    "typecheck": "npm run typecheck --prefix backend",
+    "build": "npm run build --prefix frontend"
+  }
+}

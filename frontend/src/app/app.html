@@ -1,0 +1,32 @@
+<header class="topbar">
+  <a routerLink="/" class="brand" aria-label="TrustID AI home">
+    <span class="logo" aria-hidden="true">
+      <svg viewBox="0 0 32 32"><path d="M16 2 4 7v8c0 7.2 5.1 13.4 12 15 6.9-1.6 12-7.8 12-15V7L16 2Z" fill="url(#lg)"/>
+        <path d="m11 16 3.5 3.5L21.5 12" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#6d8bff"/><stop offset="1" stop-color="#a37bff"/></linearGradient></defs></svg>
+    </span>
+    <span class="name">TrustID <em>AI</em></span>
+  </a>
+  <nav>
+    @for (n of nav; track n.path) {
+      <a [routerLink]="n.path" routerLinkActive="active">{{ n.label }}</a>
+    }
+  </nav>
+  <div class="right">
+    @switch (demo.mode()) {
+      @case ('offline') { <span class="mode offline" title="Start the backend on :4000">API offline</span> }
+      @case ('production') { <span class="mode prod">Production</span> }
+      @default { <span class="mode" title="Mock AI providers, deterministic scenarios, no data persisted">Demo mode</span> }
+    }
+    <app-scenario-switcher />
+  </div>
+</header>
+
+<main>
+  <router-outlet />
+</main>
+
+<footer class="foot">
+  <span>TrustID AI · hackathon prototype</span>
+  <span>Demo mode: mock AI providers · no images or biometric data are stored</span>
+</footer>

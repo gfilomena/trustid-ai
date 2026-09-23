@@ -1,0 +1,67 @@
+<section class="hero">
+  <div class="copy enter">
+    <span class="eyebrow">Identity risk engine · onboarding & account recovery</span>
+    <h1>TrustID <span class="grad">AI</span></h1>
+    <p class="subtitle">Fraud-resistant digital identity verification powered by AI.</p>
+    <p class="lead">
+      Deepfakes defeat single checks. TrustID fuses seven independent identity signals into one explainable
+      decision, so genuine customers get through in seconds and synthetic identities don't.
+    </p>
+    <div class="ctas">
+      <a routerLink="/onboarding" class="btn btn--primary btn--lg">Start Digital Onboarding →</a>
+      <a routerLink="/recovery" class="btn btn--lg">Recover My Account</a>
+    </div>
+    <div class="meta">
+      <a routerLink="/simulator">Fraud Scenario Simulator</a>
+      <span>·</span>
+      <a routerLink="/dashboard">Analyst dashboard</a>
+    </div>
+  </div>
+
+  <div class="preview card enter" aria-hidden="true">
+    <div class="preview-head">
+      <span class="eyebrow">Live risk fusion</span>
+      <span class="score mono">23<small>/100</small></span>
+    </div>
+    <ul class="signal-list">
+      @for (s of signals; track s.name; let i = $index) {
+        <li [style.animation-delay.ms]="200 + i * 90" class="enter">
+          <span class="nm">{{ s.name }}</span>
+          <span class="bar"><span [style.width.%]="s.score" [class]="s.status === 'PASS' ? 'ok' : 'warn'"></span></span>
+          <span class="val mono">{{ s.score }}%</span>
+          <span class="st mono" [class]="'st mono ' + (s.status === 'PASS' ? 'ok' : 'warn')">{{ s.status }}</span>
+        </li>
+      }
+    </ul>
+    <div class="equals">
+      <span>=</span>
+      <div><strong>LOW RISK</strong><small>Approve · no friction added</small></div>
+    </div>
+  </div>
+</section>
+
+<section class="pillars">
+  @for (p of pillars; track p.n) {
+    <article class="card pillar">
+      <div class="p-top"><span class="icon">{{ p.icon }}</span><span class="n mono">{{ p.n }}</span></div>
+      <h3>{{ p.title }}</h3>
+      <p>{{ p.text }}</p>
+    </article>
+  }
+</section>
+
+<section class="outcomes card">
+  <div class="o-head">
+    <span class="eyebrow">Friction only when necessary</span>
+    <h2>Risk decides the next step, not a single detector</h2>
+  </div>
+  <div class="o-grid">
+    @for (o of outcomes; track o.level) {
+      <div class="o" [class]="'o tone-' + o.tone">
+        <span class="lvl mono">{{ o.level }} · {{ o.range }}</span>
+        <strong>{{ o.decision }}</strong>
+        <p>{{ o.text }}</p>
+      </div>
+    }
+  </div>
+</section>

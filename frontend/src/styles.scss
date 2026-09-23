@@ -1,0 +1,314 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   TrustID AI: design tokens & global primitives
+   Dark "security operations" aesthetic: deep ink surfaces, a single cool brand
+   accent, and semantic colours reserved strictly for risk states.
+   ────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --bg: #060913;
+  --bg-glow: radial-gradient(1200px 600px at 80% -10%, rgba(91, 124, 255, 0.14), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, rgba(45, 212, 167, 0.07), transparent 60%);
+  --surface: #0c1220;
+  --surface-2: #111a2c;
+  --surface-3: #17223a;
+  --border: rgba(148, 163, 196, 0.13);
+  --border-strong: rgba(148, 163, 196, 0.24);
+
+  --text: #e8ecf5;
+  --text-2: #b4bdd0;
+  --muted: #7d879c;
+
+  --brand: #6d8bff;
+  --brand-2: #a37bff;
+  --brand-soft: rgba(109, 139, 255, 0.14);
+
+  --pass: #2fd6a3;
+  --pass-soft: rgba(47, 214, 163, 0.12);
+  --warn: #f6b547;
+  --warn-soft: rgba(246, 181, 71, 0.13);
+  --fail: #ff5d7d;
+  --fail-soft: rgba(255, 93, 125, 0.13);
+
+  --radius-sm: 8px;
+  --radius: 14px;
+  --radius-lg: 20px;
+  --shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 20px 50px -24px rgba(0, 0, 0, 0.7);
+
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background: var(--bg-glow), var(--bg);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+::selection {
+  background: var(--brand-soft);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-feature-settings: 'tnum';
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+/* ── Surfaces ───────────────────────────────────────────────────────────── */
+
+.card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.018), transparent 40%), var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 24px;
+}
+
+.card--tight {
+  padding: 16px;
+}
+
+.divider {
+  height: 1px;
+  background: var(--border);
+  border: 0;
+  margin: 20px 0;
+}
+
+/* ── Buttons ────────────────────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 12px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-2);
+  font-weight: 550;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.15s var(--ease), background 0.2s, border-color 0.2s, box-shadow 0.2s;
+  white-space: nowrap;
+
+  &:hover:not(:disabled) {
+    background: var(--surface-3);
+    border-color: rgba(148, 163, 196, 0.36);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+  }
+}
+
+.btn--primary {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  color: #fff;
+  box-shadow: 0 10px 30px -12px rgba(109, 139, 255, 0.8);
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #7f99ff, #b18fff);
+    border-color: transparent;
+  }
+}
+
+.btn--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-2);
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: transparent;
+  }
+}
+
+.btn--lg {
+  height: 52px;
+  padding: 0 26px;
+  font-size: 15px;
+  border-radius: 14px;
+}
+
+.btn--sm {
+  height: 34px;
+  padding: 0 12px;
+  font-size: 13px;
+  border-radius: 9px;
+}
+
+/* ── Forms ──────────────────────────────────────────────────────────────── */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-size: 13px;
+    color: var(--text-2);
+    font-weight: 500;
+  }
+
+  input,
+  select {
+    height: 46px;
+    padding: 0 14px;
+    border-radius: 11px;
+    border: 1px solid var(--border-strong);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 4px var(--brand-soft);
+    }
+  }
+}
+
+/* ── Semantic helpers ───────────────────────────────────────────────────── */
+
+.tone-pass {
+  --tone: var(--pass);
+  --tone-soft: var(--pass-soft);
+}
+
+.tone-warn {
+  --tone: var(--warn);
+  --tone-soft: var(--warn-soft);
+}
+
+.tone-fail {
+  --tone: var(--fail);
+  --tone-soft: var(--fail-soft);
+}
+
+.tone-brand {
+  --tone: var(--brand);
+  --tone-soft: var(--brand-soft);
+}
+
+/* ── Motion ─────────────────────────────────────────────────────────────── */
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 var(--tone-soft, var(--brand-soft));
+  }
+
+  100% {
+    box-shadow: 0 0 0 14px transparent;
+  }
+}
+
+.enter {
+  animation: fade-up 0.5s var(--ease) both;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  border-top-color: currentColor;
+  animation: spin 0.8s linear infinite;
+  flex: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

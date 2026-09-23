@@ -1,0 +1,106 @@
+<header class="page-head">
+  <div>
+    <span class="eyebrow">Presenter tool · deterministic mock providers</span>
+    <h1>Fraud Scenario Simulator</h1>
+    <p class="muted">Pick an attack, run every AI provider in one shot, and watch the risk engine respond. Same input, same result, every time.</p>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="card controls">
+    <span class="eyebrow">Scenario</span>
+    <div class="options" role="radiogroup" aria-label="Scenario">
+      @for (s of demo.scenarios(); track s.id) {
+        <button type="button" role="radio" class="opt" [class.on]="selected() === s.id" [attr.aria-checked]="selected() === s.id" (click)="select(s.id)">
+          <span class="radio" aria-hidden="true"></span>
+          <span class="txt"><strong>{{ s.label }}</strong><small>{{ s.description }}</small></span>
+          <span class="ico">{{ icons[s.id] }}</span>
+        </button>
+      }
+    </div>
+
+    <span class="eyebrow">Flow</span>
+    <div class="seg" role="group" aria-label="Flow">
+      <button type="button" [class.on]="flow() === 'ONBOARDING'" (click)="flow.set('ONBOARDING'); session.set(null)">Onboarding</button>
+      <button type="button" [class.on]="flow() === 'RECOVERY'" (click)="flow.set('RECOVERY'); session.set(null)">Account recovery</button>
+    </div>
+
+    @if (summary(); as s) {
+      <div class="expect">
+        <div><span class="k">Attack vector</span>{{ s.attackVector }}</div>
+        <div><span class="k">Expected</span>{{ decisionMeta[s.expectedDecision].label }}</div>
+      </div>
+    }
+
+    <button class="btn btn--primary btn--lg" type="button" [disabled]="running()" (click)="run()">
+      @if (running()) { <span class="spinner"></span> Running 7 providers… } @else { ▶ Run simulation }
+    </button>
+    <button class="btn" type="button" (click)="playGuided()">Play in guided {{ flow() === 'RECOVERY' ? 'recovery' : 'onboarding' }} flow →</button>
+    <button class="btn btn--ghost" type="button" [disabled]="matrixBusy()" (click)="runAll()">
+      @if (matrixBusy()) { <span class="spinner"></span> } Compare all scenarios
+    </button>
+    @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
+  </aside>
+
+  <section class="result">
+    @if (session(); as s) {
+      <app-risk-assessment-view [assessment]="s.assessment!" [flow]="s.flow" />
+    } @else {
+      <div class="card empty">
+        @if (running()) {
+          <span class="spinner big"></span>
+          <p>Running document, biometric, liveness, deepfake, device and behavioural models…</p>
+        } @else {
+          <span class="eyebrow">No simulation yet</span>
+          <p class="muted">Choose a scenario and press <strong>Run simulation</strong>.</p>
+        }
+      </div>
+    }
+  </section>
+</div>
+
+@if (matrix(); as m) {
+  <section class="card matrix enter">
+    <div class="m-head">
+      <div><span class="eyebrow">Side-by-side</span><h2>Same engine, five very different verdicts</h2></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Signal</th>
+            @for (s of demo.scenarios(); track s.id) { <th>{{ s.label }}<small>{{ s.recommendedFlow === 'RECOVERY' ? 'recovery' : 'onboarding' }}</small></th> }
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows; track row.id) {
+            <tr>
+              <td class="rl">{{ row.label }}</td>
+              @for (s of demo.scenarios(); track s.id) {
+                @let sig = signalOf(m[s.id], row.id);
+                <td>
+                  @if (sig) { <span class="cell mono" [class]="'cell mono tone-' + statusTone(sig.status)">{{ sig.score }}</span> }
+                  @else { <span class="na">·</span> }
+                </td>
+              }
+            </tr>
+          }
+          <tr class="total">
+            <td class="rl">Overall risk</td>
+            @for (s of demo.scenarios(); track s.id) {
+              @let a = m[s.id].assessment!;
+              <td><span class="score mono" [class]="'score mono tone-' + levelTone(a.riskLevel)">{{ a.overallScore }}</span></td>
+            }
+          </tr>
+          <tr>
+            <td class="rl">Decision</td>
+            @for (s of demo.scenarios(); track s.id) {
+              @let a = m[s.id].assessment!;
+              <td><app-status-badge [label]="decisionMeta[a.decision].label" [tone]="decisionMeta[a.decision].tone" /></td>
+            }
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+}
